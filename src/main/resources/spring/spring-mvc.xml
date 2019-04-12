@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--配置映射处理器-->
+    <!--将请求地址与IndexController类进行绑定-->
+    <!--<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>-->
+
+    <!--配置处理器适配器-->
+    <!--将IndexController里的方法变成service处理-->
+    <!--<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>-->
+
+    <!--配置请求映射 一个请求对应一个类-->
+    <!--<bean name="/index" class="com.xm.springmvc.controller.IndexController"/>-->
+
+
+
+
+    <!--扫描config包-->
+    <!--<context:component-scan base-package="com.xm.hy.psi.config"/>-->
+
+    <!--开启mvc自动扫描和自动注入-->
+
+    <!--方式1-->
+    <!--<context:component-scan base-package="com.xm.hy.psi" use-default-filters="false">-->
+        <!--&lt;!&ndash;只扫描有@Controller注解的类&ndash;&gt;-->
+        <!--<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>-->
+        <!--&lt;!&ndash;只扫描有@RestController注解的类&ndash;&gt;-->
+        <!--<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController"/>-->
+    <!--</context:component-scan>-->
+
+    <!--方式2-->
+    <context:component-scan base-package="com.xm.mall">
+        <!--除了@Service其它都扫描-->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+    </context:component-scan>
+
+
+
+    <!-- 开启mvc的注解驱动 -->
+    <mvc:annotation-driven/>
+
+
+    <!--配置拦截器-->
+    <!--<mvc:interceptors>-->
+
+    <!--<mvc:interceptor>-->
+    <!--&lt;!&ndash;拦截范围&ndash;&gt;-->
+    <!--<mvc:mapping path="/**"/>-->
+    <!--&lt;!&ndash;拦截器&ndash;&gt;-->
+    <!--<bean class="com.xm.springmvc.interceptor.MyInterceptor"/>-->
+    <!--</mvc:interceptor>-->
+    <!--<mvc:interceptor>-->
+    <!--<mvc:mapping path="/**"/>-->
+    <!--<bean class="com.xm.springmvc.interceptor.LoginInterceptor"/>-->
+    <!--</mvc:interceptor>-->
+
+    <!--</mvc:interceptors>-->
+
+
+    
+    <!--配置静态资源映射 如html-->
+    <!--swagger-ui静态资源文件-->
+    <mvc:resources mapping="/swagger-ui.html" location="classpath:/META-INF/resources/"/>
+    <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
+
+    <!-- 放行静态资源 -->
+    <!--<mvc:resources mapping="/static/*" location="/static/**"/>-->
+    <mvc:resources mapping="/static/**" location="/static/"/>
+
+    <!--配置全局异常-->
+    <bean class="com.xm.mall.commons.GlobalExceptionResolve"/>
+
+    <!--配置视图解析器-->
+    <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
+        <!--&lt;!&ndash;配置视图解析器类别&ndash;&gt;-->
+        <!--<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>-->
+        <!--&lt;!&ndash;配置前缀&ndash;&gt;-->
+        <!--<property name="prefix" value="/WEB-INF/jspPage/"/>-->
+        <!--&lt;!&ndash;配置后缀&ndash;&gt;-->
+        <!--<property name="suffix" value=".jsp"/>-->
+    <!--</bean>-->
+
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+    <property name="viewResolvers">
+        <list>
+            <bean id="viewResolvers" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+                <property name="prefix" value="/WEB-INF/jsp/"/>
+                <property name="suffix" value=".jsp"/>
+            </bean>
+        </list>
+    </property>
+    <property name="defaultViews">
+        <list>
+            <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
+            <bean class="org.springframework.web.servlet.view.xml.MappingJackson2XmlView"/>
+            <bean class="com.xm.mall.view.PDFView"/>
+            <bean class="com.xm.mall.view.ExcelView"/>
+        </list>
+    </property>
+    </bean>
+
+
+    <!--配置文件上传解析器-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--设置文件的编码格式-->
+        <property name="defaultEncoding" value="UTF-8"/>
+        <!--上传文件的大小,最大为200MB=209715200=1024*1024*200-->
+        <property name="maxUploadSize" value="209715200"/>
+    </bean>
+    
+</beans>

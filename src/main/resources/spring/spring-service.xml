@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--5、开启service层的自动注入与扫描-->
+    <context:component-scan base-package="com.xm.mall.service"/>
+
+    <!--6、声明式事务 ,由spring管理事务   扩展：编程式事务：在代码中手写事务-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--7、配置事务管理-->
+
+    <!--方式一 注解事务-->
+    <!--开启注解事务-->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!--使用注解事务  @Transactional:事务-->
+    <!--@Transactional(rollbackFor = Exception.class)-->
+
+    <!--方式二 xml事务-->
+    <!--<tx:advice id="interceptor" transaction-manager="transactionManager">-->
+    <!--<tx:attributes>-->
+    <!--<tx:method name="save*"/>-->
+    <!--<tx:method name="delete*"/>-->
+    <!--<tx:method name="update*"/>-->
+    <!--<tx:method name="find*" read-only="true"/>-->
+    <!--<tx:method name="*" rollback-for="Exception"/>-->
+    <!--</tx:attributes>-->
+    <!--</tx:advice>-->
+    <!---->
+    <!--<aop:config>-->
+    <!--<aop:pointcut id="pointcut" expression="execution(* com.xm.spring.springJDBC.service.impl.*.*(..))"/>-->
+    <!--<aop:advisor advice-ref="interceptor" pointcut-ref="pointcut"/>-->
+    <!--</aop:config>-->
+
+    <!--8、注解配置AOP-->
+    <aop:aspectj-autoproxy/>
+
+    <!--打开通知对应的扫描与注入的包路径,或者在其中使用bean标签手动注入对应的通知类-->
+    <!--<context:component-scan base-package="com.xm.hy.psi.advice"/>-->
+
+    
+    
+</beans>

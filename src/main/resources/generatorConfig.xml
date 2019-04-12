@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+
+    <!--加载数据文件,获取数据源-->
+    <!--<properties resource="config.properties"/>-->
+
+    <!--导入JDBC驱动包的绝对地址-->
+    <classPathEntry location="D:\maven\repository\mysql\mysql-connector-java\5.1.47\mysql-connector-java-5.1.47.jar"/>
+
+    <!--targetRuntime="MyBatis3Simple" 只生成简单的模板,无Example-->
+    <!--targetRuntime="MyBatis3" 生成全部的模板,有Example-->
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <!--公共的生成器-->
+        <commentGenerator>
+            <!--开启删除生成的注释-->
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <!--直接编写数据源-->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/psi?serverTimezone=Asia/Shanghai&amp;useUnicode=true&amp;useSSL=false&amp;characterEncoding=utf8&amp;allowMultiQueries=true"
+                        userId="root"
+                        password="123">
+
+            <!--mysql 5以上版本会出现无法获取主键-->
+            <!--设置可以获取tables remarks主键信息-->
+            <!--<property name="useInformationSchema" value="true"/>-->
+            <!--设置可以获取remarks主键信息-->
+            <!--<property name="remarks" value="true"/>-->
+
+            <!--只在连接的指定的库里找表 ,这句话指定是哪个数据库，否则会扫描所有数据库 (数据库8以上) -->
+            <property name="nullCatalogMeansCurrent" value="true"/>
+
+        </jdbcConnection>
+
+        <!--加载文件中的数据源-->
+        <!--<jdbcConnection driverClass="${jdbc.driver}"-->
+                        <!--connectionURL="${jdbc.url}"-->
+                        <!--userId="${jdbc.username}"-->
+                        <!--password="${jdbc.password}">-->
+        <!--</jdbcConnection>-->
+
+        <!--生成模型的包和位置,bean文件-->
+        <javaModelGenerator targetPackage="com.xm.mall.bean" targetProject="src/main/java">
+            <!-- 同意添加包前缀 -->
+            <property name="enableSubPackages" value="true"/>
+            <!-- 去掉空格 -->
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- 生成mapper.xml关系映射文件 -->
+        <sqlMapGenerator targetPackage="mapper"  targetProject="src\main\resources">
+            <!-- 同意添加包前缀 -->
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+
+        <!-- 生成mappper接口 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.xm.mall.dao" targetProject="src\main\java">
+            <!-- 同意添加包前缀 -->
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+
+        <!--需要生成的表-->
+        <table tableName="goods" domainObjectName="Goods"/>
+        <table tableName="category" domainObjectName="Category"/>
+        <table tableName="merchant" domainObjectName="Merchant"/>
+
+        <!--<table schema="DB2ADMIN" tableName="user_tb" domainObjectName="User" >-->
+            <!-- 是否主键生成 -->
+            <!-- <property name="useActualColumnNames" value="true"/>-->
+            <!-- 主键生成的字段 -->
+            <!--    <generatedKey column="ID" sqlStatement="mysql" identity="true" />-->
+            <!-- <columnOverride column="DATE_FIELD" property="startDate" />-->
+            <!-- 忽略的列 -->
+            <!-- <ignoreColumn column="FRED" />-->
+            <!-- 字段重写  制定数据类型 -->
+            <!-- <columnOverride column="LONG_VARCHAR_FIELD" jdbcType="VARCHAR" />-->
+        <!--</table>-->
+    </context>
+
+
+</generatorConfiguration>

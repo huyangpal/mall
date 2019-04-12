@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--1、导入配置文件-->
+    <context:property-placeholder location="classpath:config/config.properties"/>
+
+    <!--2、配置数据源，使用druid连接池-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <!--基本连接属性-->
+        <!--该连接池的driver可以不用配置，会从URL中推到出来-->
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+
+        <!--其他连接属性-->
+        <!--配置监控统计拦截器-->
+        <property name="filters" value="stat"/>
+        <!--最大活跃数-->
+        <property name="maxActive" value="20"/>
+        <!--初始化个数-->
+        <property name="initialSize" value="1"/>
+        <!--最小连接数-->
+        <property name="minIdle" value="1"/>
+        <!--等待超时时间 (毫秒)-->
+        <property name="maxWait" value="60000"/>
+        <!--多长时间进行一次检查，检测需要关闭的空闲连接(毫秒)-->
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        <!--一个连接在池中最小的生存时间(毫秒)-->
+        <property name="minEvictableIdleTimeMillis" value="30000"/>
+        <!--申请连接 检测连接是否有效-->
+        <property name="testOnBorrow" value="true"/>
+        <!--归还连接是否有效-->
+        <property name="testWhileIdle" value="false"/>
+
+        <property name="testOnReturn" value="false"/>
+
+        <property name="maxOpenPreparedStatements" value="20"/>
+
+        <property name="asyncInit" value="true"/>
+
+    </bean>
+
+    <!--3、配置sqlSessionFactory-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--配置与mybatis绑定的数据源-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--设置别名-->
+        <property name="typeAliasesPackage" value="com.xm.hy.psi.pojo"/>
+        <!--加载映射文件-->
+        <property name="mapperLocations" value="classpath:mapper/*Mapper.xml"/>
+        <!--使用分页插件-->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <!--使用下面的方式配置参数，一行配置一个 -->
+                        <!--参数1：指定使用的数据库 helperDialect=mysql-->
+                        <!--参数2：开启分页合理化 reasonable=true-->
+                        <value>
+                            helperDialect=mysql
+                            reasonable=true
+                        </value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+
+    </bean>
+
+    <!--4、配置自动扫描映射关系-->
+    <!-- 去加载所有的mapper接口，在spring中(IOC容器中)创建该接口的实现类 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--指定自动扫描的接口基础包 ,指定要加载的接口 包位置-->
+        <property name="basePackage" value="com.xm.hy.psi.dao"/>
+    </bean>
+
+
+</beans>
